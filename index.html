@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salles de classe et enseignants 2030</title>
+<meta name="description" content="Tableau de bord d'aide à la décision : salles de classe et enseignants au Burkina Faso, besoins 2030, priorités par province et par commune.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3Crect width='3' height='1' fill='%23EF2B2D'/%3E%3Crect y='1' width='3' height='1' fill='%23009E49'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+<script src="lib/plotly.min.js"></script>
+<script src="data/donnees.js"></script>
+<script src="data/geo.js"></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-accueil" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
+  <symbol id="i-diagnostic" viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></symbol>
+  <symbol id="i-besoins" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8"/></symbol>
+  <symbol id="i-priorites" viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></symbol>
+  <symbol id="i-repartition" viewBox="0 0 24 24"><path d="M12 3v6"/><path d="M12 9 5 15v5"/><path d="M12 9l7 6v5"/><path d="M12 9v11"/></symbol>
+  <symbol id="i-communes" viewBox="0 0 24 24"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></symbol>
+  <symbol id="i-cycles" viewBox="0 0 24 24"><path d="M12 4 3 8.5l9 4.5 9-4.5z"/><path d="M3 12.5 12 17l9-4.5"/><path d="M3 16.5 12 21l9-4.5"/></symbol>
+  <symbol id="i-guide" viewBox="0 0 24 24"><path d="M4 5.5C6.5 4 9.5 4 12 6c2.5-2 5.5-2 8-.5V19c-2.5-1.5-5.5-1.5-8 .5-2.5-2-5.5-2-8-.5z"/><path d="M12 6v13.5"/></symbol>
+  <symbol id="i-filtre" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></symbol>
+  <symbol id="i-reglages" viewBox="0 0 24 24"><path d="M4 7h10"/><path d="M18 7h2"/><circle cx="16" cy="7" r="2"/><path d="M4 17h4"/><path d="M12 17h8"/><circle cx="10" cy="17" r="2"/></symbol>
+  <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 19h14"/></symbol>
+  <symbol id="i-lien" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-reinit" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8"/><path d="M4 4v4h4"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.5"/></symbol>
+  <symbol id="i-fleche" viewBox="0 0 24 24"><path d="M5 12h13"/><path d="M13 7l5 5-5 5"/></symbol>
+</svg>
+
+<header class="entete">
+  <div class="entete-titre">
+    <img class="drapeau" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABACAIAAABqVuVZAAADk0lEQVR42u3YS2tdVRQH8P9ae5977qu5SaRaaa0N2LQhsdVaFRUHIlSCVQeKFfEDiDM/gaADEZw40ZHiwGlHTvwAioKCiDX4gGg1QTAkN03u4zz23quDW03SUnEgZ9+S9R+fwTq/s/faax/qzt8Lzc3DSqBACqRACqRACqRACqRRIAVSIAVSIAVSIAXSKNAtDEQK9C8RwI2X0TgBBVBD6HaPksbHiMenEBmyOVGkz/VlQONU1/i0Hgd7urCPZNQM8Ap0XTyoHcxCwXd4M1tKNi6LaGyqyIjvKfmoA2AfzsenDdk4HATInirEkT1TUENkyPb+nFoBApi9jwEI+wBI+gS3aweNsAT2wQwlUIBnSr7L+e9StGRHRACAWqHilVU5kMCeynnKyzbDXAOSEnzIm7udFAQCJaid75f1QP8AeSAVGLhLKUbtSaoCkio/CAEOknPy4rZ9IJMtAwGRAICQDOjaed+n5Nyw9vQAAgEQiNohbHL2fmeneVdVNm3NLVQ6KDNkwBCkr2ynF3qB4Ao2LNcfGAEQBBBBbCu4r9PsvY5ftdwRjNgqA1o9ezpCkxbIJvOj+dSr3Xon94W98YUFsBRgsPbpZPlJWwyoLtXPR3T4g6ciTIUEYoQeTx5wb528/GynK0K0V4dIlov09eVj3/4xYVpeCBIQoVR8vBhtdmaBY3haOvX9XLNfBuZdOyzh8PjS/OebHTQL+GhDkWUfBwcQCpCAudbgWJqFwAQEIQBEEoTA4bH29pdbB9jBy85JXzVQiDewWhIf+HznSiMph2UtoZBYBwGEXWAIPT/VfefPO4OQxPtVFPOq4YXA4ZnJrveccrDWvbt6+OWfZze8qSdl7ux9rf58cyi7tt7+uGr8/WVC4OP17Eyrb4z8lZvXfjl+cX0KwFeD9oczy09MboJkceLKUq/FxgehWHVGAiLBaH81hp+tTz90aeHi+rRJnE3cr3ntyR9PvvH7UQAv3bYhJBF/fsQBIsAL1Yx/YXrj7d9mFn86cblMTFJ6ISfExoPDmytHzv2wcNCWZ9s98cZE6pWEjxajAInQQetm0/yLrQmyjvZe1AkwJK5MjjSyQ9Z9028SB9k/PUgAkKx5s9ZrjxaO3PCAEzJJuVIkK0WCSDoxm/RomRAHf/Pu64VGV1mJV2RMIPkPbx6RJv4cdEtEgRRIgRRIgRRIgRRIgTQKpEAKpEAKpEAKpEAaBVKg/y1XAdKQbx2Y4fl+AAAAAElFTkSuQmCC" width="42" height="28" alt="Drapeau du Burkina Faso">
+    <div>
+      <h1>Salles de classe et enseignants : où agir d'ici 2030 ?</h1>
+      <p class="sous-titre">Burkina Faso · préscolaire, primaire, post-primaire · aide à la décision par province et par commune</p>
+    </div>
+  </div>
+  <span class="badge-version" id="badge-version"></span>
+</header>
+<div class="lisere" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<nav class="onglets" id="onglets" aria-label="Pages du tableau de bord">
+  <button data-page="accueil" class="actif"><svg class="ico" aria-hidden="true"><use href="#i-accueil"/></svg>Accueil</button>
+  <button data-page="diagnostic"><svg class="ico" aria-hidden="true"><use href="#i-diagnostic"/></svg>Diagnostic</button>
+  <button data-page="besoins"><svg class="ico" aria-hidden="true"><use href="#i-besoins"/></svg>Besoins 2030</button>
+  <button data-page="priorites"><svg class="ico" aria-hidden="true"><use href="#i-priorites"/></svg>Priorités</button>
+  <button data-page="repartition"><svg class="ico" aria-hidden="true"><use href="#i-repartition"/></svg>Répartition</button>
+  <button data-page="communes"><svg class="ico" aria-hidden="true"><use href="#i-communes"/></svg>Communes</button>
+  <button data-page="cycles"><svg class="ico" aria-hidden="true"><use href="#i-cycles"/></svg>Trois cycles</button>
+  <button data-page="methode"><svg class="ico" aria-hidden="true"><use href="#i-guide"/></svg>Guide et méthode</button>
+</nav>
+
+<div class="mise-en-page">
+  <aside class="reglages" id="reglages" aria-label="Filtres et paramètres">
+    <button class="bouton-tiroir" id="bouton-tiroir" aria-expanded="false"><svg class="ico" aria-hidden="true"><use href="#i-reglages"/></svg>Filtres et paramètres</button>
+    <div class="reglages-corps" id="reglages-corps">
+      <h2><svg class="ico" aria-hidden="true"><use href="#i-filtre"/></svg>Filtres</h2>
+      <label>Découpage administratif
+        <select id="f-decoupage">
+          <option value="ancien">Ancien : 13 régions, 45 provinces</option>
+          <option value="nouveau">Nouveau : 17 régions, 47 provinces</option>
+        </select>
+      </label>
+      <label>Région
+        <select id="f-region"><option value="">Tout le pays</option></select>
+      </label>
+      <label>Province
+        <input id="f-province" list="liste-provinces" placeholder="Tapez un nom…" autocomplete="off">
+        <datalist id="liste-provinces"></datalist>
+      </label>
+      <div class="puces" id="puces"></div>
+
+      <h2><svg class="ico" aria-hidden="true"><use href="#i-reglages"/></svg>Paramètres <span class="aide" tabindex="0" title="Chaque changement recalcule aussitôt les besoins 2030, les priorités et la répartition, sur toutes les pages.">?</span></h2>
+      <details class="groupe" open>
+        <summary>Normes du primaire</summary>
+        <label>Élèves par salle de classe
+          <span class="ligne-curseur"><input type="range" id="r-ns" min="30" max="80" step="1"><output id="o-ns"></output></span>
+          <span class="etiquette HYPOTHESE">HYPOTHÈSE</span><span class="note-mini">aucune norme écrite trouvée</span>
+        </label>
+        <label>Ratio élève/maître
+          <span class="ligne-curseur"><input type="range" id="r-nm" min="30" max="80" step="1"><output id="o-nm"></output></span>
+          <span class="etiquette NORME">NORME</span><span class="note-mini">50 : DGESS, primaire 2023-24</span>
+        </label>
+      </details>
+      <details class="groupe">
+        <summary>Normes des autres niveaux</summary>
+        <div id="normes-niveaux"></div>
+      </details>
+      <details class="groupe" open>
+        <summary>Demande en 2030</summary>
+        <label>Scénario
+          <select id="r-scenario">
+            <option value="maintien">Maintien du taux de scolarisation actuel</option>
+            <option value="cible">Scolarisation relevée à une cible</option>
+          </select>
+        </label>
+        <label id="bloc-cible">Taux de couverture cible
+          <span class="ligne-curseur"><input type="range" id="r-cible" min="60" max="120" step="5"><output id="o-cible"></output></span>
+        </label>
+      </details>
+      <details class="groupe">
+        <summary>Poids, budget et règle de répartition</summary>
+        <div id="resume-reglages"></div>
+      </details>
+      <button class="bouton-secondaire" id="b-reinit"><svg class="ico" aria-hidden="true"><use href="#i-reinit"/></svg>Réinitialiser</button>
+      <button class="bouton-secondaire" id="b-partager" title="Copie l'adresse de cette vue (filtres et paramètres compris)"><svg class="ico" aria-hidden="true"><use href="#i-lien"/></svg>Copier le lien de cette vue</button>
+    </div>
+  </aside>
+
+  <main id="contenu">
+    <section class="page actif" id="p-accueil"></section>
+    <section class="page" id="p-diagnostic"></section>
+    <section class="page" id="p-besoins"></section>
+    <section class="page" id="p-priorites"></section>
+    <section class="page" id="p-repartition"></section>
+    <section class="page" id="p-communes"></section>
+    <section class="page" id="p-cycles"></section>
+    <section class="page" id="p-methode"></section>
+  </main>
+</div>
+
+<footer class="pied">
+  <p id="pied-texte"></p>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
